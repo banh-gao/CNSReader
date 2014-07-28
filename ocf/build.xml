@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns:ivy="antlib:org.apache.ivy.ant" name="OCF" basedir="." default="applyTemplate">
+
+	<property name="doc" location="doc"/>
+	<property name="build" location="build"/>
+	<property name="major" value="1"/>
+	<property name="minor" value="3"/>
+	<property name="publishresolver" value="local"/>
+	
+	<path id="project.class.path">
+		<fileset dir="lib">
+			<include name="*.jar"/>
+		</fileset>
+	</path>
+
+
+	<target name="init">
+		<tstamp />
+		<mkdir dir="${build}"/>
+		<mkdir dir="released"/>
+		<property name="ivy.settings.file" value="../ivysettings.xml" />
+		<property name="ivy.settings.url" value="http://jenkins.mi.cardcontact.de/ivysettings.xml" />
+		<ivy:configure />
+	</target>
+
+
+	<target name="create_revision_property" depends="init">
+		<exec executable="svnversion" outputproperty="build.revision">
+			<arg file="${basedir}"/>
+			<redirector>
+				<outputfilterchain>
+					<tokenfilter>
+						<replaceregex pattern='([\d]+).*' replace="\1" />
+					</tokenfilter>
+				</outputfilterchain>
+			</redirector>
+		</exec>	
+		<property name="version" value="${major}.${minor}.${build.revision}"/>
+		<echo message="Version number is ${version}"/>
+	</target>
+	
+
+	<target name="resolve" depends="init">
+		<ivy:retrieve />
+	</target>
+
+
+	<target name="compile">
+		<mkdir dir="${build}/bin"/>
+		<javac encoding="8859_1" srcdir="${basedir}" destdir="${build}/bin">
+			<classpath refid="project.class.path"/>
+			<exclude name="**/.svn"/>
+			<exclude name="build/" />
+			<exclude name="jni/" />
+			<exclude name="lib/" />
+			<exclude name="doc/" />
+			<exclude name="released/" />
+		</javac>
+		<copy todir="${build}/bin">
+			<fileset dir="${basedir}">
+				<include name="de/cardcontact/cli/*.png"/>
+				<include name="de/cardcontact/cli/*.gif"/>
+			</fileset>
+		</copy>
+	</target>
+
+
+	<target name="dist" depends="compile,create_revision_property" >
+		<mkdir dir="${build}/lib"/>
+		<copy todir="${build}/lib">
+			<fileset dir="${basedir}/lib">
+				<include name="*.dll"/>
+				<include name="*.so"/>
+			</fileset>
+		</copy>
+		<jar jarfile="${build}/lib/ocf-cc.jar" basedir="${build}/bin">
+			<manifest>
+				<attribute name="Main-Class" value="de.cardcontact.cli.CardUpdater"/>
+				<attribute name="Specification-Version" value="${major}.${minor}"/>
+				<attribute name="Implementation-Version" value="${build.revision}"/>
+				<attribute name="Permissions" value="all-permissions"/>
+			</manifest>
+		</jar>
+		<signjar jar="${build}/lib/ocf-cc.jar" keystore="${basedir}/../codesigner.jks" alias="codesigner" storepass="chipcard"/>
+		<delete dir="${build}/bin"/>
+	</target>
+
+
+	<target name="ivypublish" depends="resolve,dist">
+		<ivy:publish organisation="org.openscdp" module="ocf-cc" resolver="${publishresolver}" pubrevision="${version}" update="true" overwrite="true">
+			<artifacts pattern="build/lib/[artifact].[ext]" />
+		</ivy:publish>
+	</target>
+
+
+	<target name="ivyinstall" depends="create_revision_property">
+		<ivy:install organisation="org.openscdp" module="ocf-cc" from="local" to="shared" revision="${version}" overwrite="true"/>
+	</target>
+
+
+	<target name="applyTemplate">
+		<apply executable="perl" dir="${doc}" force="true">
+			<arg value="stt.pl" />
+			<fileset dir="${doc}" includes="*.html"/>
+		</apply>
+		<delete>
+			<fileset dir="${doc}" includes="*.html~" defaultexcludes="false"/>
+		</delete>
+	</target>
+
+
+	<target name="javadoc">
+		<javadoc sourcepath="${basedir}" destdir="${doc}/api"/> 
+	</target>
+
+
+	<target name="package" depends="init, applyTemplate, dist, javadoc">
+		<property name="build" location="build"/>
+		<property name="bundlename" value="ocf-${version}.zip"/>
+		<property name="bundle" location="released/${bundlename}"/>
+		<filter token="bundlename" value="${bundlename}"/>
+
+		<mkdir dir="${build}"/>
+
+		<copy todir="${build}">
+			<fileset dir="${basedir}">
+				<exclude name="doc/"/>
+				<exclude name="**/.svn"/>
+				<exclude name="build/"/>
+				<exclude name="released/"/>
+				<exclude name="**/*.class"/>
+			</fileset> 
+		</copy>
+
+		<copy todir="${build}/doc" filtering="true">
+			<fileset dir="${doc}">
+				<include name="**/*.html"/>
+			</fileset> 
+		</copy>
+
+		<copy todir="${build}/doc">
+			<fileset dir="${doc}">
+				<include name="**/*.css"/>
+				<include name="**/*.jpg"/>
+				<include name="**/*.png"/>
+				<include name="**/*.pdf"/>
+				<include name="api/"/>
+				<include name="LICENSE-BaseOCF"/>
+				<include name="LICENSE-Reference-Impl"/>
+			</fileset> 
+		</copy>
+
+		<zip destfile="${bundle}" includes="*">
+			<zipfileset dir="${build}" prefix="ocf"/>
+		</zip>
+	</target>
+
+
+	<target name="publish" depends="create_revision_property">
+		<property name="bundlename" value="ocf-${version}.zip"/>
+		<property name="bundle" location="released/${bundlename}"/>
+		<filter token="bundlename" value="${bundlename}"/>
+
+		<exec executable="scp" dir="${build}/doc">
+			<arg line="-r . asc@diavola:/var/www/openscdp.org/ocf" />
+		</exec>
+		<exec executable="scp" dir="${basedir}">
+			<arg line="${bundle} ocf.jnlp ${build}/lib/ocf-cc.jar asc@diavola:/var/www/openscdp.org/ocf" />
+		</exec>
+	</target>
+
+
+	<target name="all" depends="resolve,ivypublish,package"/>
+
+
+	<target name="clean">
+		<delete dir="${build}"/>
+	</target>
+	
+		
+	<target name="clean-all" depends="clean">
+		<ivy:cleancache/>
+	</target>
+
+</project>

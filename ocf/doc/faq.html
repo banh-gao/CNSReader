@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<!-- #BeginTemplate "template.dwt" -->
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+<head>
+<!-- #BeginEditable "TITLE" -->
+<title>OpenCard Framework</title>
+<!-- #EndEditable -->
+<link rel=stylesheet type="text/css" href="style.css"/>
+<meta name="author" content="Andreas Schwier"/>
+</head>
+<body>
+<div id="wrapper">
+<div><a href="http://www.cardcontact.de"><img src="banner.jpg" width="750" height="80"/></a></div>
+<div id="navigator">
+	<ul>
+		<li>
+			<ul>
+				<li><a href="index.html">Home</a></li>
+				<li><a href="http://www.openscdp.org/ocf/download.html">Download</a></li>
+			</ul>
+		</li>
+		<li>
+			<ul>
+				<li><a href="api/index.html">Javadoc</a></li>
+				<li><a href="PGuide.pdf">Prog-Guide</a></li>
+				<li><a href="changes.html">Changes</a></li>
+				<li><a href="faq.html">FAQs</a></li>
+			</ul>
+		</li>
+		<li>
+			<ul>
+				<li><a href="http://www.openscdp.org">OpenSCDP</a></li>
+				<li><a href="http://www.cardcontact.de/company/contact.html">Contact</a></li>
+			</ul>
+		</li>
+	</ul>
+</div>
+<div id="main">
+<!-- #BeginEditable "BODY" -->
+<h1>OpenCard Framework FAQ</h1>
+<h2 id="client">OCF Web client</h2>
+<p>The OCF Web Client is part of the <a href="api/de/cardcontact/cli/package-summary.html">CardUpdater</a> module
+   and allows a web application to access a smart card located at the client.
+   The OCF Web Client is a local daemon that listens on port 27001 for activation requests from
+   the local browser. See the server side implementation which is part of the 
+   <a href="http://www.openscdp.org/scriptingserver/remoteterminal.html">OpenSCDP ScriptingServer</a> for details.</p>
+<h3>Starting the OCF Web Client</h3>
+<p>The OCF Web Client can be started using <a href="http://www.openscdp.org/ocf/ocf.jnlp">Java Web Start</a>
+   or by downloading and double-clicking on <a href="http://www.openscdp.org/ocf/ocf-cc.jar">ocf-cc.jar</a></p>
+<p>The OCF Web Client can also be started from the command line using</p>
+<pre>java -jar ocf-cc.jar -v</pre>
+<p>If you are behind a proxy, then you will need to specify the 
+   <a href="http://docs.oracle.com/javase/6/docs/technotes/guides/net/proxies.html">proxy parameter on the command line</a>:</p>
+<pre>java -Dhttp.proxyHost=webcache.example.com -jar ocf-cc.jar -v</pre>
+<p>Once started, the OCF Web Client will create a tray icon through which you can access program options.</p>
+<h3>Troubleshooting</h3>
+<h4>Using NoScript</h4>
+<p>If you are using <a href="http://noscript.net/">NoScript</a>, then Application Boundaries Enforder (ABE) will
+   prevent a website to access the local OCF Web Client.
+   In this case you are getting the message that the web page could not connect to the local client.</p>
+<p>You get this message, because ABE allows a web page to load resources only from the same origin where
+   the page was loaded from. To activate the OCF Web Client the web page tries to read an image from 
+   http://127.0.0.1:27001 - the port where the OCF Web Client is listening for requests.</p>
+<p>To set a rule that allows access, you need to go to "NoScript Options" / "Advanced" / "ABE" / "SYSTEM" and make sure the
+   following rules are defined:
+<pre>
+# Allow access to OCF Web Client
+Site 127.0.0.1:27001
+Accept ALL from demo.openscdp.org
+
+# Prevent Internet sites from requesting LAN resources.
+
+Site LOCAL
+Accept from LOCAL
+Deny
+</pre>
+<p>To allow other sites to access the OCF Web Client add rules accordingly.</p>
+<h4>No card reader found</h4>
+<p>You can check the attached reader with</p>
+<pre>java -jar ocf-cc.jar -l</pre>
+<p>If you are on a Linux system, then you might need to install the pcscd package and add the user to the
+   pcscd group to get access to the card reader.</p>
+<p>On some systems libpcsclite is installed in a directory where 
+   <a href="http://ludovicrousseau.blogspot.de/2013/03/oracle-javaxsmartcardio-failures.html">Java does not find it</a>.</p>
+<h4>Still not working - What could I do</h4>
+<p>Please use the following steps to isolate the problem:</p>
+<ol>
+	<li>Click on the OCF Web Client tray icon and select "Show log"</li>
+	<li>Enter http://127.0.0.1:27001 in your browser. If it displays a small read cross, then the OCF Web Client is
+	    running. You should see that activity in the log.</li>
+	<li>Check the that OCF Web Client can connect to the server with
+		<pre>java -jar ocf-cc.jar -v http://demo.openscdp.org/paas/rt/paas</pre>If you get a 504 error after 10 seconds, then
+		the connection is working.</li>
+	<li>Try the same thing in your browser using the URL<pre>http://127.0.0.1:27001/test.png?url=http://demo.openscdp.org/paas/rt/paas</pre>
+	    You should see the red cross after about 10 seconds.</li>
+	<li>If you can connect to your local client directly, but not from the web page, then check your browser 
+	    security settings for options that prevent a web page to load resources from other than the original URL
+	    (Look for things like Application Boundaries Enforcement or Same Origin Policies)</li>
+</ol>
+
+
+
+<!-- #EndEditable -->
+<br/>
+<p class="copyright">&copy; Copyright 2003 - 2012 <a href="http://www.cardcontact.de">CardContact</a>
+Software &amp; System Consulting, Minden, Germany</p>
+<p class="copyright">The BaseOCF implementation and the enhancements made by the OpenSCDP project are licensed
+under the <a href="LICENSE-BaseOCF">Open Card Consortium license agreement</a>.</p> 
+<p class="copyright">The Reference implementation is <a href="LICENSE-Reference-Impl">Copyright ? 1997 - 1999 IBM Corporation</a>. This code is derived from
+the original OpenCard Framework.</p>
+</div>
+</div>
+</body>
+</html><!-- #EndTemplate -->
