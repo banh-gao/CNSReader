@@ -1,5 +1,4 @@
 package com.github.zeroDenial.CNS;
-<<<<<<< HEAD
 
 import java.io.ByteArrayInputStream;
 import java.io.FileNotFoundException;
@@ -20,17 +19,6 @@ import opencard.core.OpenCardException;
 import opencard.core.service.CardServiceException;
 import opencard.core.service.SmartCard;
 import opencard.core.terminal.CardTerminalException;
-=======
-import java.io.ByteArrayInputStream;
-import java.io.FileNotFoundException;
-import java.nio.charset.Charset;
-import java.security.MessageDigest;
-import java.security.cert.CertificateFactory;
-import java.security.cert.X509Certificate;
-import opencard.core.OpenCardException;
-import opencard.core.service.CardServiceException;
-import opencard.core.service.SmartCard;
->>>>>>> 554a29a70fdb07309f47f0f9ffa2b7878d486980
 import opencard.opt.iso.fs.CardFile;
 import opencard.opt.iso.fs.CardFilePath;
 import opencard.opt.iso.fs.FileAccessCardService;
@@ -39,7 +27,6 @@ import opencard.opt.security.PublicKeyFile;
 import opencard.opt.signature.SignatureCardService;
 import org.bouncycastle.asn1.x509.X509NameTokenizer;
 import org.bouncycastle.util.encoders.Base64;
-<<<<<<< HEAD
 import com.github.zeroDenial.utils.AttributeMap;
 import com.github.zeroDenial.utils.AttributeMap.Attribute;
 
@@ -101,28 +88,11 @@ public class CNSCard {
 	static final Charset CARD_CHARSET = Charset.forName("US-ASCII");
 
 	static final String CARD_ID_REGEX = "[0-9]{16}";
-=======
-
-public class CNSCard {
-
-	private static final String CARDID__PATH = ":1000:1003";
-	private static final String CERTIFICATE_PATH = ":1100:1101";
-	private static final String PRIV_KEY_PATH = ":1100:1101";
-	private static final String PUB_KEY_PATH = ":3f01";
-	private static final String DATI_PERS_PATH = ":1100:1102";
-
-	private static final String DATI_PERS_HASH_ALG = "SHA1";
-	private static final Charset DATI_PERS_HASH_CHARSET = Charset.forName("US-ASCII");
->>>>>>> 554a29a70fdb07309f47f0f9ffa2b7878d486980
 
 	private final FileAccessCardService facs;
 	private final SignatureCardService scs;
 
-<<<<<<< HEAD
 	private CNSCard(SmartCard sc) throws CardServiceException {
-=======
-	public CNSCard(SmartCard sc) throws CardServiceException {
->>>>>>> 554a29a70fdb07309f47f0f9ffa2b7878d486980
 		try {
 			facs = (FileAccessCardService) sc.getCardService(FileAccessCardService.class, true);
 			// TODO: scs = (SignatureCardService)
@@ -133,40 +103,24 @@ public class CNSCard {
 		}
 	}
 
-<<<<<<< HEAD
 	public static CNSCard getInstance(SmartCard sc) throws CardServiceException {
 		return new CNSCard(sc);
 	}
 
 	public byte[] signData(byte[] data, String signAlg) throws CardServiceException, InvalidKeyException, CardTerminalException {
-=======
-	public CardInfo getCardInfo() throws Exception {
-		return CardInfo.decode(readFile(CARDID__PATH));
-	}
-
-	public byte[] signData(byte[] data, String signAlg) throws Exception {
->>>>>>> 554a29a70fdb07309f47f0f9ffa2b7878d486980
 		// create the private key reference
 		CardFilePath path = new CardFilePath(":3F00:C200");
 		PrivateKeyFile keyRef = new PrivateKeyFile(path, 0);
 		return scs.signData(keyRef, signAlg, data);
 	}
 
-<<<<<<< HEAD
 	public boolean verifySign(byte[] data, String signAlg, byte[] sign) throws CardServiceException, InvalidKeyException, CardTerminalException {
-=======
-	public boolean verifySign(byte[] data, String signAlg, byte[] sign) throws Exception {
->>>>>>> 554a29a70fdb07309f47f0f9ffa2b7878d486980
 		CardFilePath path = new CardFilePath(PUB_KEY_PATH);
 		PublicKeyFile keyRef = new PublicKeyFile(path, 1);
 		return scs.verifySignedData(keyRef, signAlg, data, sign);
 	}
 
-<<<<<<< HEAD
 	public X509Certificate getCertificate() throws FileNotFoundException, OpenCardException, CertificateException {
-=======
-	public X509Certificate getCertificate() throws Exception {
->>>>>>> 554a29a70fdb07309f47f0f9ffa2b7878d486980
 		byte[] data = readFile(CERTIFICATE_PATH);
 
 		CertificateFactory cf = CertificateFactory.getInstance("X.509");
@@ -174,7 +128,6 @@ public class CNSCard {
 		return (X509Certificate) cf.generateCertificate(new ByteArrayInputStream(data));
 	}
 
-<<<<<<< HEAD
 	public AttributeMap getPersonalData() throws IOException, OpenCardException, ParseException {
 		byte[] data = readFile(DATI_PERS_PATH);
 		return PersonalDataParser.decode(data);
@@ -183,32 +136,14 @@ public class CNSCard {
 	public AttributeMap getCardInfo() throws IOException, OpenCardException {
 		byte[] data = readFile(CARDID_PATH);
 		return CardIdParser.decode(new String(data, CNSCard.CARD_CHARSET));
-=======
-	public DatiPersonali getPersonalData() throws Exception {
-		byte[] data = readFile(DATI_PERS_PATH);
-		return DatiPersonali.decode(data);
-	}
-
-	private byte[] readFile(String path) throws FileNotFoundException, OpenCardException {
-		CardFile root = new CardFile(facs);
-		CardFile file = new CardFile(root, path);
-		return facs.read(file.getPath(), 0, file.getLength());
->>>>>>> 554a29a70fdb07309f47f0f9ffa2b7878d486980
 	}
 
 	public boolean checkDataConsistency() throws Exception {
 		byte[] datiPersonali = readFile(DATI_PERS_PATH);
-<<<<<<< HEAD
 		String codFiscale = PersonalDataParser.decode(datiPersonali).get(COD_FISC);
 
 		String cardId = getCardInfo().get(CARD_ID);
 		String datiPersHash = new String(Base64.encode(MessageDigest.getInstance(DATI_PERS_HASH_ALG).digest(datiPersonali)), CARD_CHARSET);
-=======
-		String codFiscale = DatiPersonali.decode(datiPersonali).getCodFiscale();
-
-		String cardId = getCardInfo().getId();
-		String datiPersHash = new String(Base64.encode(MessageDigest.getInstance(DATI_PERS_HASH_ALG).digest(datiPersonali)), DATI_PERS_HASH_CHARSET);
->>>>>>> 554a29a70fdb07309f47f0f9ffa2b7878d486980
 
 		String expectedCN = codFiscale + "/" + cardId + "." + datiPersHash;
 
@@ -220,7 +155,6 @@ public class CNSCard {
 		// expectedCN.equals(IETFUtils.valueToString(cn.getFirst().getValue()));
 		return false;
 	}
-<<<<<<< HEAD
 
 	private byte[] readFile(String path) throws FileNotFoundException, OpenCardException {
 		CardFile root = new CardFile(facs);
@@ -364,6 +298,4 @@ class CardIdParser {
 		else
 			return checkDigit == (10 - (somma % 10));
 	}
-=======
->>>>>>> 554a29a70fdb07309f47f0f9ffa2b7878d486980
 }

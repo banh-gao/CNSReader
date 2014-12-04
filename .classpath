@@ -6,10 +6,6 @@
 			<attribute name="maven.pomderived" value="true"/>
 		</attributes>
 	</classpathentry>
-<<<<<<< HEAD
-=======
-	<classpathentry kind="src" path="ocf"/>
->>>>>>> 554a29a70fdb07309f47f0f9ffa2b7878d486980
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.7">
 		<attributes>
 			<attribute name="maven.pomderived" value="true"/>
@@ -20,10 +16,7 @@
 			<attribute name="maven.pomderived" value="true"/>
 		</attributes>
 	</classpathentry>
-<<<<<<< HEAD
 	<classpathentry kind="lib" path="ocf-cc.jar"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/Utils"/>
-=======
->>>>>>> 554a29a70fdb07309f47f0f9ffa2b7878d486980
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>
