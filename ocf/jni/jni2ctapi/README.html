@@ -1,0 +1,319 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<HTML>
+<HEAD>
+	<TITLE></TITLE>
+	<META NAME="GENERATOR" CONTENT="Microsoft FrontPage 4.0">
+	<META NAME="AUTHOR" CONTENT="Frank Thater">
+	<META NAME="CREATED" CONTENT="20000802;16025300">
+	<META NAME="CHANGEDBY" CONTENT="Frank Thater">
+	<META NAME="CHANGED" CONTENT="20000809;15454000">
+</HEAD>
+<BODY BGCOLOR="#ffffff">
+<P ALIGN=CENTER><FONT SIZE=6><B>JNI2CTAPI Driver Version 1.1.0 <BR>for Linux and
+Windows 9x/NT/2000</B></FONT></P>
+<P ALIGN=CENTER>&copy; 2000 CardContact Software &amp; System
+Consulting</P>
+<H1>&nbsp;
+</H1>
+<H1 ALIGN=CENTER><FONT SIZE=4 STYLE="font-size: 16pt">CardContact
+Software &amp; System Consulting takes <B><U><I>no warranty</I></U></B>
+for the use of this program. <BR>It is provided &#132;as is&#147; and
+you may use it <U><I>at your own risk</I></U>!!</FONT></H1>
+<P ALIGN=CENTER>&nbsp;</P>
+<H1 STYLE="font-weight: medium"><FONT FACE="times, serif"><FONT SIZE=3>This
+driver implements a CTAPI driver for JAVA. It&acute;s purpose is to
+make the CTAPI-interface available for JAVA programmers without the
+reprogramming of present CTAPI-librarys.</FONT></FONT></H1>
+<P><B><FONT SIZE=3><FONT FACE="times, serif">Requ</FONT></FONT>irements:</B></P>
+<UL>
+	<LI><P><FONT FACE="times, serif">JDK 1.2.2 or higher</FONT></P>
+	<LI><P STYLE="font-weight: medium"><FONT FACE="times, serif"><FONT SIZE=3>gcc
+	version 2.90 or higher (for Linux) / Watcom C/C++ Version 10.0 or
+	higher (for Win32)</FONT></FONT></P>
+	<LI><P><SPAN STYLE="font-weight: medium"><FONT SIZE=3><FONT FACE="times, serif">a
+	shared lib or DLL containing the CTAPI-interface<BR>(for ORGA&acute;s
+	ECO5000 card reader take a look at </FONT><A HREF="http://www.cardcontact.de/">www.cardcontact.de</A><FONT FACE="times, serif">)</FONT></FONT></SPAN></P>
+	<LI><P STYLE="font-weight: medium"><FONT FACE="times, serif"><FONT SIZE=3>OpenCard
+	Framework V1.2 (only used by the test-program)<BR></FONT></FONT><BR>
+	</P>
+</UL>
+<h1 STYLE="font-weight: medium"><font size="6"><b>Support/Troubleshooting</b></font></h1>
+<p STYLE="font-weight: medium">If you have any problems with this package feel
+free to contact us at <a href="mailto:info@cardcontact.de">info@cardcontact.de</a>.<br>
+</p>
+<h1 STYLE="font-weight: medium"><b>I<font size="6">n</font>stallation</b></h1>
+<P>There is a fully functional version of this driver already included in this
+package. You do not need to recompile it yourself (but you can).</P>
+<P>Take a look at the following sections how to install this driver on your
+operating system.</P>
+<P><I><B><font size="4">For Linux:</font></B></I></P>
+<P><u><i>Installation:</i></u></P>
+<P>Extract the files using &quot;tar -xzf jni2ctapi.tar.gz&quot;. Then login as
+&quot;root&quot;, change
+your directory to JNI2CTAPI and type &quot;make install&quot; to copy the
+&quot;libjni2ctapi.so&quot; into
+$(JAVA_HOME)/jre/lib/i386 (Make sure that JAVA_HOME is set correctly
+to your Java directory, e.g. /usr/local/jdk1.2.2).<br>
+Then add the file &quot;jni2ctapi.jar&quot; located in the
+JNI2CTAPI-home-directory to your CLASSPATH. This makes the JNI
+classes available for the java environment.</P>
+<P><u><i>Build:</i></u></P>
+<P>Extract the files using &quot;tar -xzf jni2ctapi.tar.gz&quot;. Change your
+directory to JNI2CTAPI and type &quot;make&quot;.<br>
+If the compiler completes, follow the steps described above.</P>
+<P><I><B><font size="4">For Windows 9x/NT/2000:</font></B></I></P>
+<P><u><i>Installation:</i></u></P>
+<P>Extract all the files using WinZIP or any other program that can handle
+zipped TAR-files.<br>
+Then copy the &raquo;jni2ctapi.dll&laquo; file located in the &quot;\windows&quot;-directory
+of this package to your WINDOWS\system
+directory.<br>
+Furthermore add the file &quot;jni2ctapi.jar&quot; to
+your CLASSPATH.</P>
+<P><u><i>Build:</i></u>
+</P>
+<P>Extract all the files using WinZIP or any other program that can handle
+zipped TAR-files.<br>
+A project file for Watcom C/C++ is located in the
+windows-directory of this package. There should be no problem using
+another C-compiler (like Visual Studio, Borland C++, etc.) to compile
+this package. Just add the files &raquo;ctapi_wrapper.cpp&laquo; and
+&raquo;dllproxy.c&laquo; to your project and compile it as a DLL. Furthermore type &raquo;make jni2ctapi.jar&laquo; in a
+command shell. This will create the JAR-archive containing the
+JNI-interface.<br>
+Then follow the steps described above.
+</P>
+<P>&nbsp;
+</P>
+<P><i><font size="4"><b>Testing:</b></font></i>
+</P>
+<P>A small test file has been included, which you can build with &quot;make test&quot;. This program was tested with ORGA´s ECO 5000 card reader but it 
+should work with almost every kind of CTAPI programmed in accordance to the MCT
+specs.<BR>
+Connect the ECO 5000 reader to your PC. Insert a card and type &quot;java test_ctapi&quot;. The program will reset the card, display the ATR and
+issue a SELECT MF command (which should response with 6xxx or 9xxx).
+Finally the EJECT ICC command is sent to the card terminal. 
+</P>
+<P>If the test program was successful, the JNI2CTAPI interface was set up
+correctly. You can now use the CTAPI interface to develop JAVA
+applications accessing smartcards through CTAPI.</P>
+<H1>Programming Interface</H1>
+<P>The JNI2CTAPI driver implements the CTAPI-interface according to the MKT
+specifications. Due to limitations of the JNI the length of response
+byte is returned through the return value of CT_Data (see
+documentation).<BR><BR>
+All files are packed in the package "de.cardcontact.jni2ctapi". <BR>
+(For example de.cardcontact.jni2ctapi.cardterminal_api; )</P>
+<P><BR><BR>
+</P>
+<H3>cardterminal_api (String readername)</H3>
+<P>Constructor for the JNI2CTAPI interface. 
+</P>
+<TABLE WIDTH=607 BORDER=1 CELLPADDING=4 CELLSPACING=3>
+	<COL WIDTH=90>
+	<COL WIDTH=490>
+	<THEAD>
+		<TR VALIGN=TOP>
+			<TH WIDTH=90>
+				<P><BR>
+				</P>
+			</TH>
+			<TH WIDTH=490>
+				<P><FONT SIZE=3>cardterminal_api (String readername)</FONT></P>
+			</TH>
+		</TR>
+	</THEAD>
+	<TBODY>
+		<TR VALIGN=TOP>
+			<TD WIDTH=90>
+				<P>readername</P>
+			</TD>
+			<TD WIDTH=490>
+				<P>Name of the shared lib containing the CTAPI-functions;<BR>this
+				name will be mapped automatically to &raquo;eco_5000.dll&laquo;
+				(Windows) or &raquo;libeco_5000.so&laquo; (Linux).<BR>(e.g.
+				&raquo;eco_5000&laquo;)</P>
+			</TD>
+		</TR>
+	</TBODY>
+</TABLE>
+<P><BR><BR>
+</P>
+<H3>int CT_Init (char ctn, char pn)</H3>
+<P>The CT_Init function opens and initializes the card reader. This
+function must be called at first.</P>
+<TABLE WIDTH=607 BORDER=1 CELLPADDING=4 CELLSPACING=3>
+	<COL WIDTH=63>
+	<COL WIDTH=517>
+	<THEAD>
+		<TR VALIGN=TOP>
+			<TH WIDTH=63>
+				<P><BR>
+				</P>
+			</TH>
+			<TH WIDTH=517>
+				<P>int CT_Init (char ctn, char pn)</P>
+			</TH>
+		</TR>
+	</THEAD>
+	<TBODY>
+		<TR VALIGN=TOP>
+			<TD WIDTH=63>
+				<P>ctn</P>
+			</TD>
+			<TD WIDTH=517>
+				<P>number of the card terminal</P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=63>
+				<P>pn</P>
+			</TD>
+			<TD WIDTH=517>
+				<P>port number of the terminal (e.g. 0 = /dev/ttyS0)</P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=63>
+				<P>return value</P>
+			</TD>
+			<TD WIDTH=517>
+				<P>&lt; 0 : an error occured</P>
+				<P>= 0 : card terminal successfully opened</P>
+			</TD>
+		</TR>
+	</TBODY>
+</TABLE>
+<P><BR><BR>
+</P>
+<H3>int CT_Close (char ctn)</H3>
+<P>The CT_Close function closes the connection to the card reader. 
+</P>
+<TABLE WIDTH=607 BORDER=1 CELLPADDING=4 CELLSPACING=3>
+	<COL WIDTH=63>
+	<COL WIDTH=517>
+	<THEAD>
+		<TR VALIGN=TOP>
+			<TH WIDTH=63>
+				<P><BR>
+				</P>
+			</TH>
+			<TH WIDTH=517>
+				<P>int CT_Close (char ctn)</P>
+			</TH>
+		</TR>
+	</THEAD>
+	<TBODY>
+		<TR VALIGN=TOP>
+			<TD WIDTH=63>
+				<P>ctn</P>
+			</TD>
+			<TD WIDTH=517>
+				<P>number of the card terminal</P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=63>
+				<P>return value</P>
+			</TD>
+			<TD WIDTH=517>
+				<P>&lt; 0 : an error occured</P>
+				<P>= 0 : card terminal successfully closed</P>
+			</TD>
+		</TR>
+	</TBODY>
+</TABLE>
+<H3><BR><BR>
+</H3>
+<H3>int CT_Data (char ctn, byte dad, byte sad, int lenc, byte[]
+command, char lenr, byte[] response);</H3>
+<P>The CT_Data function sends and receives data from the card.</P>
+<TABLE WIDTH=607 BORDER=1 CELLPADDING=4 CELLSPACING=3>
+	<COL WIDTH=71>
+	<COL WIDTH=509>
+	<THEAD>
+		<TR VALIGN=TOP>
+			<TH WIDTH=71>
+				<P><BR>
+				</P>
+			</TH>
+			<TD WIDTH=509>
+				<H3><FONT FACE="times, serif"><FONT SIZE=3>int CT_Data (char ctn,
+				byte dad, byte sad, int lenc, <BR>byte[] command, char lenr,
+				byte[] response);</FONT></FONT></H3>
+			</TD>
+		</TR>
+	</THEAD>
+	<TBODY>
+		<TR VALIGN=TOP>
+			<TD WIDTH=71>
+				<P>ctn</P>
+			</TD>
+			<TD WIDTH=509>
+				<P>number of the card terminal</P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=71>
+				<P>dad</P>
+			</TD>
+			<TD WIDTH=509>
+				<P>destination address</P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=71>
+				<P>sad</P>
+			</TD>
+			<TD WIDTH=509>
+				<P>source address</P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=71>
+				<P>lenc</P>
+			</TD>
+			<TD WIDTH=509>
+				<P>Length of the following command</P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=71>
+				<P>command</P>
+			</TD>
+			<TD WIDTH=509>
+				<P>the command</P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=71>
+				<P>lenr</P>
+			</TD>
+			<TD WIDTH=509>
+				<P>length of the response buffer</P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=71>
+				<P>response</P>
+			</TD>
+			<TD WIDTH=509>
+				<P>the response buffer</P>
+			</TD>
+		</TR>
+		<TR VALIGN=TOP>
+			<TD WIDTH=71>
+				<P>return<BR>value</P>
+			</TD>
+			<TD WIDTH=509>
+				<P>&lt; 2 : an error occured</P>
+				<P>&gt;= 2 : success, return value = number of bytes received,
+				length of response</P>
+			</TD>
+		</TR>
+	</TBODY>
+</TABLE>
+<P><BR><BR>
+</P>
+</BODY>
+</HTML>

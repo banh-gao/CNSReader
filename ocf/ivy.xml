@@ -1,0 +1,11 @@
+<ivy-module version="2.0">
+    <info organisation="org.openscdp" module="ocf-cc"/>
+    <publications>
+        <artifact name="ocf-cc" type="jar"/>
+        <artifact name="jni2ctapi-x86" type="native" ext="dll"/>
+        <artifact name="libjni2ctapi-i386" type="native" ext="so"/>
+        <artifact name="libjni2ctapi-amd64" type="native" ext="so"/>
+        <artifact name="ocfpcsc1" type="native" ext="dll"/>
+        <artifact name="libOCFPCSC1" type="native" ext="so"/>
+    </publications>
+</ivy-module>

@@ -1,0 +1,102 @@
+To test the BasicDatabase CardService with an ISO7816-7 compliant card:
+
+ - edit 'opencard.properties' to set the right CardTerminal component,
+
+ - edit 'TestBasicDatabaseCardService.java' to specify the right user(s)
+   and/or table(s) names
+
+ - compile 'TestBasicDatabaseCardService', e.g.,
+
+	$ javac -d /usr/local/lib/classes TestBasicDatabaseCardService.java 
+
+ - run it, e.g.,
+
+	$ java opencard.opt.database.TestBasicDatabaseCardService
+
+
+Example of log file follows.
+
+ - - - - - cut here - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+------------------------------------------------------------
+BEGIN TEST
+
+Starting OCF...
+Waiting for a DB smart card...
+[INFO     ] opencard.opt.database.BasicDatabase.knows
+--- message   DATABASE_CARDTYPE card found!
+--- thread    Thread[main,5,main]
+--- source    class opencard.opt.database.BasicDatabase
+
+
+-------------------------------------------
+PRESENT USER ('PUBLIC')
+-------------------------------------------
+
+-------------------------------------------
+SCQL Commands to read 'GB_DIARY' view
+-------------------------------------------
+
+DECLARECURSOR
+OPEN
+FETCH
+ - RESULT(0) = Holmes
+ - RESULT(1) = Scherlock
+ - RESULT(2) = 5432
+
+-------------------------------------------
+PRESENT USER ('ADMIN' 'admin')
+-------------------------------------------
+
+-------------------------------------------
+SCQL Commands to read all 'DIARY' table
+-------------------------------------------
+
+DECLARECURSOR
+OPEN
+FETCH
+ - RESULT(0) = Bart
+ - RESULT(1) = Simpson
+ - RESULT(2) = 1234
+ - RESULT(3) = USA
+NEXT ROW
+
+FETCH
+ - RESULT(0) = Scherlock
+ - RESULT(1) = Holmes
+ - RESULT(2) = 5432
+ - RESULT(3) = GB
+NEXT ROW
+
+END OF TABLE REACHED
+
+-------------------------------------------
+SCQL Commands to create a new 'FOOTABLE'
+-------------------------------------------
+
+CREATE TABLE
+
+TABLE ALREADY EXISTS...
+INSERT ('FOOTABLE' 'foo1,bar1,gee1')
+
+-------------------------------------------
+SCQL Commands to read all 'FOOTABLE' table
+-------------------------------------------
+
+DECLARECURSOR
+OPEN
+FETCH
+ - RESULT(0) = foo1
+ - RESULT(1) = bar1
+ - RESULT(2) = gee1
+NEXT ROW
+
+FETCH
+ - RESULT(0) = foo1
+ - RESULT(1) = bar1
+ - RESULT(2) = gee1
+NEXT ROW
+
+END OF TABLE REACHED
+
+END TEST.
+------------------------------------------------------------
